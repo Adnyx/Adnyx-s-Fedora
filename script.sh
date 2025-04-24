@@ -51,6 +51,7 @@ done
 
 # Installing BigBlue nerd font
 
+FONT_NAME="BigBlueTerm437 Nerd Font Mono"
 FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/BigBlueTerminal.zip"
 FONT_DIR="$HOME/.local/share/fonts"
 
@@ -65,6 +66,14 @@ while true ; do
 			rm "$FONT_DIR/BigBlue.zip"
 			fc-cache -fv "$FONT_DIR"
 			echo "Done :3"
+
+			# Search for font, if found, it sets it as default
+			if fc-list | grep -iq "$FONT_NAME"; then
+				echo "setting BigBlue as default font"
+				gsettings set org.gnome.desktop.interface monospace-font-name "$FONT_NAME"
+			else
+				echo "Couldn't find the font..."
+			fi
 			break
 			;;
 		[Nn]* )
