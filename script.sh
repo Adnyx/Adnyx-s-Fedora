@@ -8,7 +8,8 @@ sudo -v
 SUDO_PID=$!
 trap 'kill "$SUDO_PID"' EXIT
 
-USERNAME=$(whoami)
+# Get the username of the person running the script
+USER_NAME=$(whoami)
 
 # ZSH install prompt
 while true; do
@@ -16,12 +17,13 @@ while true; do
 
 	case "$install_choice" in
 		[Yy]* )
+			# Set zsh as the default shell before installing OhMyZsh
+			sudo chsh -s "$(which zsh)" "$USER_NAME"
+			
 			# Group sudo commands together
 			sudo bash -c '
 				# Install zsh shell and run it
 				dnf install -y zsh
-				# Change default terminal to zsh
-				chsh -s "$(which zsh)" $USERNAME
 				# Install OhMyZSH
 				sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 			'
