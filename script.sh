@@ -1,6 +1,6 @@
 #!/bin/bash
 while true; do
-	read "Do you wish to isntall zsh and make it default ? (y/n)" install_choice
+	read -p "Do you wish to isntall zsh and make it default ? (y/n)" install_choice
 
 	case "$install_choice" in
 		[Yy]* )
