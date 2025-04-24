@@ -1,22 +1,35 @@
 #!/bin/bash
+
+# Ask for sudo once at the beginning
+sudo -v
+
+# Keep sudo alive while the script runs
+( while true; do sudo -n true; sleep 60; done ) &
+SUDO_PID=$!
+trap 'kill "$SUDO_PID"' EXIT
+
+USERNAME=$(whoami)
+
+# ZSH install prompt
 while true; do
-	read -p "Do you wish to isntall zsh and make it default ? (y/n)" install_choice
+	read -p "Do you wish to install zsh and make it default ? (y/n) " install_choice
 
 	case "$install_choice" in
 		[Yy]* )
-
-			# Install zsh shell and run it (configure it for yourself)
-			sudo dnf install zsh
-			# Change default terminal to zsh
-			chsh -s $(which zsh)
-			# Install OhMyZSH
-			sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+			# Group sudo commands together
+			sudo bash -c '
+				# Install zsh shell and run it
+				dnf install -y zsh
+				# Change default terminal to zsh
+				chsh -s "$(which zsh)" $USERNAME
+				# Install OhMyZSH
+				sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+			'
 
 			# Cool ohmyzsh plugins
 			ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
-			git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-
+			git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
 			git clone https://github.com/zsh-users/zsh-autosuggestions.git "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
 			git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
 			break
@@ -31,10 +44,10 @@ while true; do
 	esac
 done
 
-# Copy my .zshrc config file
 
+# Copy my .zshrc config file
 while true; do
-	read -p "Do you want to copy my .zshrc file ? (y/n)" choice
+	read -p "Do you want to copy my .zshrc file ? (y/n) " choice
 	case "$choice" in
 		[Yy]* )
 			cp zshrcfile "$HOME/.zshrc"
@@ -42,7 +55,7 @@ while true; do
 			break
 			;;
 		[Nn]* )
-			echo "Aight bet, i'm skipping this part then"
+			echo "Aight bet, I'm skipping this part then"
 			break
 			;;
 		* )
@@ -52,13 +65,12 @@ while true; do
 done
 
 # Installing BigBlue nerd font
-
 FONT_NAME="BigBlueTerm437 Nerd Font Mono"
 FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/BigBlueTerminal.zip"
 FONT_DIR="$HOME/.local/share/fonts"
 
-read -p "Wanna install BigBlue nerd font ? :3 (y/n)" font_choice
-while true ; do
+while true; do
+	read -p "Wanna install BigBlue nerd font ? :3 (y/n) " font_choice
 	case "$font_choice" in 
 		[Yy]* )
 			echo "installin' some nerd fonts" 
@@ -87,3 +99,4 @@ while true ; do
 			;;
 	esac
 done
+
